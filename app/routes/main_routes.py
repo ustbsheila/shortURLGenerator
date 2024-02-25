@@ -12,7 +12,7 @@ def shorten_url_route():
     return shorten_url(data)
 
 # API endpoint to redirect to the original URL
-@main_bp.route('/<short_url>', methods=['GET'])
+@main_bp.route('/api/v1/<short_url>', methods=['GET'])
 def redirect_to_original_route(short_url):
     return redirect_to_original(short_url)
 

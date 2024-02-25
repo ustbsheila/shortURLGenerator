@@ -8,4 +8,4 @@ class Config:
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     # Host info is used to returned with complete shorten URL
-    RUNNING_HOST = "0.0.0.0"
+    RUNNING_HOST = "http://localhost:8080"

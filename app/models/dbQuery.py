@@ -6,7 +6,7 @@ from datetime import timedelta
 def check_original_url_exist(original_url):
     return URLMapping.query.filter_by(original_url=original_url).first()
 
-def retrieve_original_url(short_url):
+def get_url_mapping_by_short_url(short_url):
     return URLMapping.query.filter_by(short_url=short_url).first()
 
 def add_url_mapping(original_url, short_url):
@@ -15,6 +15,10 @@ def add_url_mapping(original_url, short_url):
     """
     new_url = URLMapping(original_url=original_url, short_url=short_url)
     db.session.add(new_url)
+    db.session.commit()
+
+def delete_url_mapping(url_mapping_entry):
+    db.session.delete(url_mapping_entry)
     db.session.commit()
 
 def add_access_log(url_mapping_entry):

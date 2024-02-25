@@ -22,6 +22,6 @@ def get_access_stats_route(short_url):
     return get_access_stats(short_url)
 
 # API endpoint to delete a short URL
-@main_bp.route('/delete/<short_url>', methods=['DELETE'])
+@main_bp.route('/api/v1/delete/<short_url>', methods=['DELETE'])
 def delete_short_url_route(short_url):
     return delete_short_url(short_url)

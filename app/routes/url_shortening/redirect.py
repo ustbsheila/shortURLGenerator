@@ -2,7 +2,7 @@ from app.models import dbQuery
 from flask import jsonify, redirect
 
 def redirect_to_original(short_url):
-    url_mapping_entry = dbQuery.retrieve_original_url(short_url)
+    url_mapping_entry = dbQuery.get_url_mapping_by_short_url(short_url)
 
     if url_mapping_entry:
         # Log the access

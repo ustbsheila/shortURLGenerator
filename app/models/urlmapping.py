@@ -7,6 +7,9 @@ class URLMapping(db.Model):
     original_url = db.Column(db.String(500), nullable=False)
     short_url = db.Column(db.String(10), unique=True, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    # Cascade deletion when URLMapping is deleted
+    access_logs = db.relationship('AccessLog', backref='url_mapping', cascade='all, delete-orphan',
+                                  passive_deletes=True)
 
     def __repr__(self):
         return f'<URLMapping {self.id}>'

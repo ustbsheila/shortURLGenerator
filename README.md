@@ -14,44 +14,72 @@ ShortURLGenerator is a simple and lightweight HTTP-based RESTful API built using
    - Endpoint: api/v1/shorten
    - Method: `POST`
    - Request Body:
-   ```
-    {
+     ```
+      {
         "long_url": "https://www.example.com"
-    }
-   ```
+      }
+     ```
    - Response:
-   ```
-    {
-        "short_url": "http://127.0.0.1:5000/abc123"
-    }
-   ```
+     - If the given short url exists, it will return a successful status code 200.
+     ```
+      {
+        "short_url": "http://localhost:8080/api/v1/5d02642a"
+      }
+     ```
+     - If the given short url doesn't exist, it will create a shorten URL and return a successful status code 200.
+     ```
+      {
+        "short_url": "http://localhost:8080/api/v1/5d02642a"
+      }
+     ```
 2. Redirect to Original URL
    - Endpoint: api/v1/<short_url>
    - Method: `GET`
-   - Example: `http://127.0.0.1:5000/abc123`
-   - Response status code: 302 (We use 302 redirect here to better keep track of short URL access stats which is supported below.)
+   - Example: `http://localhost:8080/api/v1/5d02642a`
+   - Response: 
+     - If the given short url exists, it will return a successful redirect status code 302 (We use 302 redirect here to better keep track of short URL access stats which is supported below.)
+     - If the given short url doesn't exist, it will return 404 NOT FOUND.
+     ```
+     {
+       "Error": "Short URL 5d02642aaa not found!"
+     }
+     ```
 3. Access Statistics
    - Endpoint: api/v1/stats/<short_url>
    - Method: `GET`
-   - Example: `http://127.0.0.1:5000/stats/abc123`
+   - Example: `http://localhost:8080/api/v1/stats/5d02642a`
    - Response:
-   ```
-    {
-      "last_24_hours": 50,
-      "past_week": 200,
-      "all_time": 1000
-    }
-   ```
+     - If the given short url exists, it will return a successful status code 200.
+     ```
+      {
+      "last_24_hours_access_stats": 5,
+      "past_week_access_stats": 30
+      "all_time_access_stats": 200
+      }
+     ```
+     - If the given short url doesn't exist, it will return 404 NOT FOUND.
+     ```
+     {
+       "Error": "Short URL 5d02642aaa not found!"
+     }
+     ```
 4. Delete Short URL
    - Endpoint: api/v1/delete/<short_url>
    - Method: `DELETE`
-   - Example: `http://127.0.0.1:5000/delete/abc123`
+   - Example: `http://localhost:8080/api/v1/delete/5d02642a`
    - Response:
-   ```
-   {
-     "message": "Short URL deleted successfully."
-   }
-   ```
+     - If the given short url exists, it will return a successful status code 200.
+     ```
+     {
+       "Message": "Short URL 5d02642a deleted successfully."
+     }
+     ```
+     - If the given short url doesn't exist, it will return 404 NOT FOUND.
+     ```
+     {
+       "Error": "Short URL 5d02642aaa not found!"
+     }
+     ```
 
 ## Error Handling
 - If the short URL does not exist, a 404 Not Found response will be returned.

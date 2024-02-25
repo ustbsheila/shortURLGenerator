@@ -3,7 +3,7 @@ from datetime import datetime
 from flask import jsonify
 
 def get_access_stats(short_url):
-    url_mapping_entry = dbQuery.retrieve_original_url(short_url)
+    url_mapping_entry = dbQuery.get_url_mapping_by_short_url(short_url)
 
     if url_mapping_entry:
         # Get access statistics
@@ -17,4 +17,4 @@ def get_access_stats(short_url):
             "all_time_access_stats": all_time_stats
         }), 200
     else:
-        return jsonify({"Error": f"Short URL {short_url} not found"})
+        return jsonify({"Error": f"Short URL {short_url} not found"}), 404

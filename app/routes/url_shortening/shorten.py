@@ -2,6 +2,7 @@ from flask import request, jsonify
 from app.models import dbQuery
 from app.config import Config
 import binascii
+import datetime
 
 def generate_short_code(original_url):
     # Convert the URL to bytes
@@ -33,8 +34,12 @@ def shorten_url(data):
 
     # Generate a unique short code
     generated_short_url = generate_short_code(original_url)
-
     # Create a new ShortURL entry
-    dbQuery.add_url_mapping(original_url=original_url, short_url=generated_short_url)
+    try:
+        dbQuery.add_url_mapping(original_url=original_url, short_url=generated_short_url)
+    except Exception:
+        # Collision resolution is there's a duplicate
+        generated_short_url = generate_short_code(original_url + datetime.datetime.now().strftime("%H:%M:%S"))
+        dbQuery.add_url_mapping(original_url=original_url, short_url=generated_short_url)
 
     return jsonify({"short_url": f"{Config.RUNNING_HOST}/api/v1/{generated_short_url}"}), 201

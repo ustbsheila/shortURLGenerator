@@ -1,9 +1,8 @@
 # shortURLGenerator
 
-ShortURLGenerator is a simple and lightweight HTTP-based RESTful API built using the Flask framework for managing short URLs and redirecting clients. This project allows you to create short aliases for long URLs, making it convenient for sharing and tracking links.
+ShortURLGenerator is a simple and lightweight HTTP-based RESTful API built using the Flask framework for managing short URLs and redirecting clients. This project allows you to create short aliases for long URLs, making it convenient for sharing and tracking links. 
 
-## Features
-
+It supports the following features:
 1. Generate a short URL from a long url
 2. Redirect a short URL to a long url
 3. List the number of times a short url has been accessed in the last 24 hours, past week, and all time
@@ -15,7 +14,8 @@ ShortURLGenerator is a simple and lightweight HTTP-based RESTful API built using
 - [Usage](#usage)
   - [Run the Application](#run-the-application)
   - [API Endpoints](#api-endpoints)
-- [Design Considerations](#design-considerations)
+- [Design Considerations and Assumptions](#design-considerations-and-assumptions)
+- [Improvements](#improvements)
 
 ## Prerequisites
 
@@ -23,6 +23,7 @@ Before you begin, ensure you have the following installed:
 
 - Python 3.x
 - Pip (Python package installer)
+- Docker
 
 ## Installation
 
@@ -114,17 +115,47 @@ Before you begin, ensure you have the following installed:
      }
      ```
      
-## Design Considerations
-This system may eventually scale to support millions of short URLs. 
-A short URL: 
-1. Has one long URL 
-2. No duplicate short URLs are allowed to be created.
-3. Short links can live forever or can be deleted by the user.
-4. Shortened URL can be a combination of numbers (0-9) and characters (a-z, A-Z).
+## Design Considerations and Assumptions
+### Short URL System Design
+This short URL generation system is designed to handle various considerations to ensure scalability, data integrity, and performance. Below are the key design considerations and assumptions that influenced the system architecture:
+### Short URL Characteristics:
+1. Unique Short URLs:
+  - No duplicate short URLs are allowed. Each short URL is unique and corresponds to one long URL.
+2. Longevity of Short URLs:
+  - Short links can either be permanent (live forever) or can be deleted by the user. Considering data integrity and privacy, when shorten URLs are deleted, all associated information like stats are deleted.
+3. Shortened URL Format:
+  - Shortened URLs are converted by CRC32 hash function. Based on the back-envolop calculation below, it's not sufficient to support millions of daily URL shorten request. But it' good starting point for the application. We can easily upgrade the hash function later.
 
-Application level:
-1. Write operation: support 10 million URLs / day = 116 URLs / second
-2. Read operation: assuming the read / write ratio is 10:1. Read operation per second: 1160 URLs / second
-3. Delete operation: assuming the write / delete ration is 10:1. Delete operation persecond: 12 URLs / second
-4. Assuming our application will run for 10 years and based on above assumpitons, we will have (10 - 1) million * 365 * 10 = 33 billion records
-5. Assuming average URL length is 100, storage over 10 years will require 33 billion * 100 bytes = 3 TB
+### System Scalability:
+1. Scale Expectations: The system is designed to scale and support millions of short URLs.
+2. The system is expected to handle write operations for creating short URLs at a rate of 12 URLs per second, allowing for the support of 1 million URLs per day.
+3. Assuming a read/write ratio of 10:1, the system is designed to handle read operations at a rate of 116 URLs per second.
+4. Assuming a write/delete ratio of 10:1, the system is designed to handle delete operations at a rate of 1 URLs per second.
+5. Since CRC32 generates a 32-bit checksum, there are possible unique CRC32 values, which is equal to ~4 billion. This provides a sufficiently large space of unique values for the first billion shorten URLs.
+6. Assuming average URL length is 100, storage over 10 years will require 4 billion * 100 bytes = 0.4 TB
+
+### Storage Requirements:
+1. Data Storage
+   - The system assumes an average URL length of 100 bytes.
+2. Storage Calculation
+   - Over the 10-year period, the storage requirement is estimated to be 0.4 TB based on 4 billion records.
+
+### Choice of Database - MySQL:
+1. Relational Data Model
+    - MySQL provides a reliable and robust relational database model, suitable for storing the structured data associated with short URLs.
+2. ACID Compliance 
+   - MySQL adheres to the ACID (Atomicity, Consistency, Isolation, Durability) properties, ensuring data consistency and reliability.
+      Scalability:
+3. MySQL scalability
+   - MySQL supports horizontal and vertical scaling, allowing the system to scale as the data volume increases over time.
+4. Transaction Support:
+   - Transactions are crucial for maintaining data integrity, and MySQL's support for transactions ensures that operations are performed reliably.
+
+## Improvements
+To enhance the system, the following improvements can be considered:
+1. Better Hash Function:
+    - To support more users and reduce the likelihood of collisions, consider implementing a more robust hash function (e.g., SHA-256) for short URL generation. Update the hash resolution function accordingly.
+2. Cache Implementation:
+    - Introduce caching mechanisms to improve performance. Caching commonly accessed short URLs or frequently queried data can significantly reduce database load and enhance response times.
+3. Other Enhancements:
+    - Explore additional improvements based on evolving requirements or emerging technologies. This may include optimizing database queries, implementing asynchronous processing, or integrating with content delivery networks (CDNs) for faster content delivery.

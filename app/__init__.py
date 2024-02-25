@@ -17,11 +17,15 @@ def create_app():
     app.config.from_object(Config)
 
     # Initialize the database with the Flask app
+    from .models import urlmapping
     db.init_app(app)
+    # Create tables in the database
+    with app.app_context():
+        db.create_all()
 
-    # Set the secret key for CSRF protection
-    csrf.init_app(app)
-    app.config['WTF_CSRF_SECRET_KEY'] = app.config['SECRET_KEY']
+    # # Set the secret key for CSRF protection
+    app.config['WTF_CSRF_ENABLED'] = False
+    app.config['WTF_CSRF_METHODS'] = []  # This is the magic
 
     # Import and register blueprints
     from .routes import main_bp

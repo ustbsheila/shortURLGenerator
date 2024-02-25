@@ -7,5 +7,5 @@ class Config:
     SQLALCHEMY_ECHO = True
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
-    # Set your secret key here
-    SECRET_KEY = 'a7056ecc939cb8483f9812a426e441b7'
+    # Host info is used to returned with complete shorten URL
+    RUNNING_HOST = "0.0.0.0"

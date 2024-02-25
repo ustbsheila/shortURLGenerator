@@ -6,7 +6,7 @@ from app.routes.url_shortening.stats import get_access_stats
 from app.routes.url_shortening.delete import delete_short_url
 
 # API endpoint to shorten a URL
-@main_bp.route('/shorten', methods=['POST'])
+@main_bp.route('/api/v1/shorten', methods=['POST'])
 def shorten_url_route():
     data = request.get_json()
     return shorten_url(data)

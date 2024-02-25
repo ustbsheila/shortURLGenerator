@@ -1,5 +1,6 @@
 from flask import request, jsonify
 from app.models import dbQuery
+from app.config import Config
 import binascii
 
 def generate_short_code(original_url):
@@ -19,16 +20,16 @@ def generate_short_code(original_url):
 
 def shorten_url(data):
     data = request.get_json()
-    original_url = data.get('url')
+    original_url = data.get('long_url')
 
     # Check if the URL is valid (add more validation as needed)
     if not original_url:
-        return jsonify({"error": "Invalid URL"}), 400
+        return jsonify({"Error": "Invalid request. long_url is required in the request body."}), 400
 
     # Check if the URL is already shortened
     existing_url = dbQuery.get_original_url(original_url)
     if existing_url:
-        return jsonify({"short_url": existing_url.short_url}), 200
+        return jsonify({"short_url": f"{Config.RUNNING_HOST}/{existing_url}"}), 200
 
     # Generate a unique short code
     generated_short_url = generate_short_code(original_url)
@@ -36,4 +37,4 @@ def shorten_url(data):
     # Create a new ShortURL entry
     dbQuery.add_url_mapping(original_url=original_url, short_url=generated_short_url)
 
-    return jsonify({"short_url": f"http://127.0.0.1:8080/{generated_short_url}"}), 201
+    return jsonify({"short_url": f"{Config.RUNNING_HOST}/{generated_short_url}"}), 201

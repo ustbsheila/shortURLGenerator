@@ -17,7 +17,7 @@ def redirect_to_original_route(short_url):
     return redirect_to_original(short_url)
 
 # API endpoint to get access statistics for a short URL
-@main_bp.route('/stats/<short_url>', methods=['GET'])
+@main_bp.route('/api/v1/stats/<short_url>', methods=['GET'])
 def get_access_stats_route(short_url):
     return get_access_stats(short_url)
 
